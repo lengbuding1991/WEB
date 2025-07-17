@@ -123,7 +123,7 @@
       </div>
       <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
         <p class="text-gray-400 text-sm">
-          © 2023 个人网站. 保留所有权利.
+          © 2025 冷丶布丁 <a href="">闽ICP备2025103663号</a>
         </p>
         <div class="flex space-x-6 mt-4 md:mt-0">
           <a class="text-gray-400 hover:text-white text-sm transition-custom" href="javascript:void(0);">
