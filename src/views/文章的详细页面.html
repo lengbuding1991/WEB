@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>文章详情 - 个人网站</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        dark: '#1E293B',
+                        light: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .text-balance {
+                text-wrap: balance;
+            }
+            .transition-custom {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .article-content p {
+                @apply my-4 leading-relaxed;
+            }
+            .article-content h2 {
+                @apply text-2xl font-bold mt-8 mb-4 text-dark;
+            }
+            .article-content h3 {
+                @apply text-xl font-bold mt-6 mb-3 text-dark;
+            }
+            .article-content ul {
+                @apply list-disc pl-6 my-4 space-y-2;
+            }
+            .article-content blockquote {
+                @apply border-l-4 border-primary pl-4 italic my-6 text-gray-700;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans">
+    <!-- 导航栏 -->
+    <header class='fixed w-full bg-white/90 backdrop-blur-sm z-50 transition-custom shadow-sm' id='navbar'>
+        <div class='container mx-auto px-4 sm:px-6 lg:px-8'>
+            <div class='flex justify-between items-center h-16'>
+                <div class='flex items-center'>
+                    <a class='flex items-center space-x-2' href='javascript:void(0);'>
+                        <div class='w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white'>
+                            <i class='fas fa-code text-xl'></i>
+                        </div>
+                        <span class='text-xl font-bold text-dark'>个人网站</span>
+                    </a>
+                </div>
+                <!-- 桌面导航 -->
+                <nav class='hidden md:flex space-x-8'>
+                    <a class='text-gray-600 hover:text-primary font-medium transition-custom' href='#home'>首页</a>
+                    <a class='text-gray-600 hover:text-primary font-medium transition-custom' href='#about'>关于我</a>
+                    <a class='text-gray-600 hover:text-primary font-medium transition-custom' href='#skills'>技能</a>
+                    <a class='text-gray-600 hover:text-primary font-medium transition-custom' href='#projects'>项目</a>
+                    <a class='text-primary font-medium transition-custom' href='#blog'>博客</a>
+                    <a class='text-gray-600 hover:text-primary font-medium transition-custom' href='#contact'>联系</a>
+                </nav>
+                <!-- 移动端菜单按钮 -->
+                <div class='md:hidden'>
+                    <button class='text-gray-600 hover:text-primary focus:outline-none' id='menu-toggle'>
+                        <i class='fas fa-bars text-xl'></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- 移动端导航菜单 -->
+        <div class='hidden md:hidden bg-white border-t' id='mobile-menu'>
+            <div class='container mx-auto px-4 py-3 space-y-3'>
+                <a class='block py-2 text-gray-600 hover:text-primary font-medium' href='#home'>首页</a>
+                <a class='block py-2 text-gray-600 hover:text-primary font-medium' href='#about'>关于我</a>
+                <a class='block py-2 text-gray-600 hover:text-primary font-medium' href='#skills'>技能</a>
+                <a class='block py-2 text-gray-600 hover:text-primary font-medium' href='#projects'>项目</a>
+                <a class='block py-2 text-primary font-medium' href='#blog'>博客</a>
+                <a class='block py-2 text-gray-600 hover:text-primary font-medium' href='#contact'>联系</a>
+            </div>
+        </div>
+    </header>
+    <!-- 主要内容 -->
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+        <!-- 文章头部 -->
+        <div class="max-w-4xl mx-auto mb-12">
+            <div class="flex items-center text-sm text-gray-500 mb-4">
+                <a href="javascript:void(0);" class="hover:text-primary transition-custom">博客</a>
+                <span class="mx-2">/</span>
+                <a href="javascript:void(0);" class="hover:text-primary transition-custom">前端开发</a>
+            </div>
+            
+            <h1 class="text-4xl md:text-5xl font-bold text-dark mb-6 leading-tight text-balance">
+                深入理解Tailwind CSS：现代实用优先的CSS框架
+            </h1>
+            
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-8">
+                <div class="flex items-center space-x-3">
+                    <img src="https://design.gemcoder.com/staticResource/echoAiSystemImages/afded1a5a20d90aebab32d8b569095c5.png" alt="作者头像" class="w-10 h-10 rounded-full object-cover">
+                    <div>
+                        <p class="font-medium">张明</p>
+                        <p class="text-sm text-gray-500">前端开发工程师</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center space-x-6 text-sm text-gray-500">
+                    <div class="flex items-center">
+                        <i class="far fa-calendar-alt mr-2"></i>
+                        <span>2023年11月15日</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="far fa-clock mr-2"></i>
+                        <span>8分钟阅读</span>
+                    </div>
+                    <div class="flex items-center">
+                        <i class="far fa-comment mr-2"></i>
+                        <span>24条评论</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 文章封面图 -->
+            <div class="rounded-xl overflow-hidden mb-8 shadow-lg">
+                <img src="https://design.gemcoder.com/staticResource/echoAiSystemImages/ae4e792210fbeb7827b69238f7a3f0a6.png" alt="文章封面" class="w-full h-auto object-cover">
+            </div>
+            
+            <!-- 文章标签 -->
+            <div class="flex flex-wrap gap-2 mb-8">
+                <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">#Tailwind CSS</span>
+                <span class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm">#前端开发</span>
+                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm">#CSS框架</span>
+                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm">#Web开发</span>
+                <span class="px-3 py-1 bg-red-100 text-red-800 rounded-full text-sm">#响应式设计</span>
+            </div>
+        </div>
+        
+        <!-- 文章内容 -->
+        <div class="max-w-3xl mx-auto article-content">
+            <p class="text-lg text-gray-700 leading-relaxed">
+                在现代前端开发中，CSS的管理一直是一个挑战。随着项目规模的增长，传统的CSS组织方式往往导致样式冲突、代码冗余和维护困难。Tailwind CSS作为一个实用优先（utility-first）的CSS框架，提供了一种全新的样式开发方式，正在改变我们编写CSS的方式。
+            </p>
+            
+            <h2>什么是实用优先的CSS框架？</h2>
+            
+            <p>
+                实用优先的CSS框架与传统框架（如Bootstrap或Foundation）有本质区别。传统框架提供预定义的组件类（如<button class="btn btn-primary">），而实用优先框架提供低级别的实用类（如class="flex justify-center items-center p-4 bg-blue-500 text-white rounded-md"），让你能够直接在HTML中构建自定义设计，而无需编写CSS。
+            </p>
+            
+            <blockquote>
+                Tailwind CSS不直接提供UI组件，而是提供构建块，让你能够轻松创建任何设计。这种方法使你的CSS保持最小，同时赋予你完全的设计自由。
+            </blockquote>
+            
+            <h2>Tailwind CSS的核心优势</h2>
+            
+            <h3>1. 开发速度显著提升</h3>
+            
+            <p>
+                使用Tailwind，你可以直接在HTML中应用类来设计元素，无需在CSS文件和HTML文件之间切换。这种"即时反馈"的开发方式极大地加快了UI开发速度。
+            </p>
+            
+            <div class="bg-gray-100 p-6 rounded-lg my-6">
+                <pre class="text-sm overflow-x-auto"><code>&lt;!-- 使用Tailwind直接在HTML中设计按钮 --&gt;
+&lt;button class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out transform hover:scale-105"&gt;
+  点击我
+&lt;/button&gt;</code></pre>
+            </div>
+            
+            <h3>2. 一致的设计系统</h3>
+            
+            <p>
+                Tailwind强制你使用预定义的设计标记（颜色、间距、字体大小等），确保整个项目的视觉一致性。你不再需要猜测应该使用哪个像素值的边距或哪种确切的蓝色色调。
+            </p>
+            
+            <div class="my-8">
+                <img src="https://design.gemcoder.com/staticResource/echoAiSystemImages/c1d9fb93f87f8b5bef74ba1a90df3b47.png" alt="Tailwind设计系统" class="w-full h-auto rounded-lg shadow-md">
+                <p class="text-sm text-gray-500 mt-2 text-center">Tailwind的设计系统确保了整个项目的视觉一致性</p>
+            </div>
+            
+            <h3>3. 响应式设计变得简单</h3>
+            
+            <p>
+                Tailwind内置了响应式前缀（sm:, md:, lg:, xl:），使创建响应式界面变得异常简单。无需编写媒体查询，只需在类名前添加相应的前缀即可。
+            </p>
+            
+            <div class="bg-gray-100 p-6 rounded-lg my-6">
+                <pre class="text-sm overflow-x-auto"><code>&lt;div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"&gt;
+  &lt;div class="p-4 bg-white rounded shadow"&gt;卡片1&lt;/div&gt;
+  &lt;div class="p-4 bg-white rounded shadow"&gt;卡片2&lt;/div&gt;
+  &lt;div class="p-4 bg-white rounded shadow"&gt;卡片3&lt;/div&gt;
+  &lt;div class="p-4 bg-white rounded shadow"&gt;卡片4&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+            </div>
+            
+            <h2>开始使用Tailwind CSS</h2>
+            
+            <p>
+                要开始使用Tailwind CSS，你可以通过npm安装它，或者直接在HTML中通过CDN引入：
+            </p>
+            
+            <div class="bg-gray-100 p-6 rounded-lg my-6">
+                <pre class="text-sm overflow-x-auto"><code>&lt;!-- 通过CDN引入Tailwind CSS --&gt;
+&lt;script src="https://cdn.tailwindcss.com"&gt;&lt;/script&gt;</code></pre>
+            </div>
+            
+            <p>
+                对于生产环境，建议使用Tailwind CLI或PostCSS插件来构建和优化CSS，只包含你实际使用的类，从而减小文件大小。
+            </p>
+            
+            <h2>常见问题与解决方案</h2>
+            
+            <h3>HTML变得臃肿？</h3>
+            
+            <p>
+                一个常见的批评是Tailwind会使HTML变得臃肿，因为元素上会有很多类。解决方案是使用@apply指令将常用组合提取到CSS中，或者使用组件抽象（如在React、Vue或其他框架中创建组件）。
+            </p>
+            
+            <div class="bg-gray-100 p-6 rounded-lg my-6">
+                <pre class="text-sm overflow-x-auto"><code>&lt;!-- 在CSS中使用@apply提取常用组合 --&gt;
+&lt;style type="text/tailwindcss"&gt;
+  @layer components {
+    .btn-primary {
+      @apply bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded;
+    }
+  }
+&lt;/style&gt;
+&lt;!-- 在HTML中使用 --&gt;
+&lt;button class="btn-primary"&gt;点击我&lt;/button&gt;</code></pre>
+            </div>
+            
+            <h3>学习曲线陡峭？</h3>
+            
+            <p>
+                刚开始可能需要频繁查阅文档来记住所有的类名。但一旦熟悉了命名模式（如bg-[color]-[shade]、text-[color]-[shade]、p-[size]等），你会发现编写Tailwind代码变得非常自然。
+            </p>
+            
+            <h2>结语</h2>
+            
+            <p>
+                Tailwind CSS代表了现代CSS开发的一种趋势，它通过提供低级别的实用类，让开发者能够快速构建独特的界面，同时保持代码的可维护性和一致性。虽然它的方法可能与传统CSS开发有所不同，但一旦克服了初始学习曲线，你会发现它极大地提高了开发效率。
+            </p>
+            
+            <p>
+                无论你是独立开发者还是在大型团队中工作，Tailwind CSS都能帮助你构建美观、一致且响应式的网站，而无需编写大量自定义CSS。
+            </p>
+        </div>
+        
+        <!-- 文章底部 -->
+        <div class="max-w-3xl mx-auto mt-16 pt-8 border-t border-gray-200">
+            <!-- 分享按钮 -->
+            <div class="flex flex-wrap items-center justify-between gap-4 mb-12">
+                <h3 class="text-lg font-bold">分享这篇文章</h3>
+                <div class="flex space-x-3">
+                    <a href="javascript:void(0);" class="w-10 h-10 rounded-full bg-blue-500 flex items-center justify-center text-white hover:bg-blue-600 transition-custom">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="javascript:void(0);" class="w-10 h-10 rounded-full bg-sky-400 flex items-center justify-center text-white hover:bg-sky-500 transition-custom">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="javascript:void(0);" class="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center text-white hover:bg-green-600 transition-custom">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="javascript:void(0);" class="w-10 h-10 rounded-full bg-gray-800 flex items-center justify-center text-white hover:bg-gray-900 transition-custom">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="javascript:void(0);" class="w-10 h-10 rounded-full bg-blue-700 flex items-center justify-center text-white hover:bg-blue-800 transition-custom">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 作者信息 -->
+            <div class="flex flex-col md:flex-row gap-6 items-center md:items-start p-6 bg-gray-50 rounded-xl mb-12">
+                <img src="https://design.gemcoder.com/staticResource/echoAiSystemImages/46c3fceabcaacfa061d1d80ef7d8e4f5.png" alt="作者头像" class="w-20 h-20 rounded-full object-cover">
+                <div class="flex-1">
+                    <h3 class="text-xl font-bold mb-2">张明</h3>
+                    <p class="text-gray-600 mb-4">资深前端开发工程师，拥有8年前端开发经验，热衷于探索现代Web技术和用户界面设计。曾参与多个大型Web应用的开发，专注于前端性能优化和用户体验提升。</p>
+                    <div class="flex space-x-4">
+                        <a href="javascript:void(0);" class="text-gray-500 hover:text-primary transition-custom">
+                            <i class="fab fa-github"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="text-gray-500 hover:text-primary transition-custom">
+                            <i class="fab fa-linkedin"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="text-gray-500 hover:text-primary transition-custom">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="javascript:void(0);" class="text-gray-500 hover:text-primary transition-custom">
+                            <i class="fab fa-codepen"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 相关文章 -->
+            <div class="mb-12">
+                <h3 class="text-2xl font-bold mb-6">你可能也喜欢</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <a href="javascript:void(0);" class="group">
+                        <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-custom">
+                            <img src="https://design.gemcoder.com/staticResource/echoAiSystemImages/ca77528e2ed3446d067cfefc0188dee6.png" alt="相关文章图片" class="w-full h-48 object-cover group-hover:scale-105 transition-custom duration-500">
+                            <div class="p-5">
+                                <h4 class="font-bold text-lg mb-2 group-hover:text-primary transition-custom">React Hooks完全指南：提升你的组件逻辑</h4>
+                                <p class="text-gray-600 text-sm mb-3">探索React Hooks如何改变组件逻辑的编写方式，提高代码复用性和可读性...</p>
+                                <span class="text-sm text-gray-500">2023年10月28日 · 10分钟阅读</span>
+                            </div>
+                        </div>
+                    </a>
+                    <a href="javascript:void(0);" class="group">
+                        <div class="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-custom">
+                            <img src="https://design.gemcoder.com/staticResource/echoAiSystemImages/1b2fe26a6c5c668eb79896df16ff466a.png" alt="相关文章图片" class="w-full h-48 object-cover group-hover:scale-105 transition-custom duration-500">
+                            <div class="p-5">
+                                <h4 class="font-bold text-lg mb-2 group-hover:text-primary transition-custom">JavaScript性能优化：10个提升应用速度的技巧</h4>
+                                <p class="text-gray-600 text-sm mb-3">学习如何优化你的JavaScript代码，减少加载时间，提升用户体验...</p>
+                                <span class="text-sm text-gray-500">2023年11月2日 · 7分钟阅读</span>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            
+            <!-- 评论区 -->
+            <div>
+                <h3 class="text-2xl font-bold mb-6">评论 (24)</h3>
+                
+                <!-- 评论输入框 -->
+                <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
+                    <h4 class="text-lg font-semibold mb-4">添加评论</h4>
+                    <textarea class="w-full p-4 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-custom resize-none h-32" placeholder="分享你的想法..."></textarea>
+                    <div class="flex justify-end mt-4">
+                        <button class="bg-primary hover:bg-primary/90 text-white px-6 py-2 rounded-lg transition-custom font-medium">
+                            发表评论
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- 评论列表 -->
+                <div class="space-y-6">
+                    <!-- 评论1 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-start gap-4">
+                            <img src="https://design.gemcoder.com/staticResource/echoAiSystemImages/5bc997c1c7922803a5b09792530a3670.png" alt="评论者头像" class="w-12 h-12 rounded-full object-cover">
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-semibold">李小红</h4>
+                                    <span class="text-sm text-gray-500">2天前</span>
+                                </div>
+                                <p class="text-gray-700 mb-4">非常棒的文章！我最近刚开始使用Tailwind CSS，这篇文章帮助我更好地理解了它的核心概念和使用技巧。特别是关于@apply指令的部分，解决了我对HTML臃肿的担忧。</p>
+                                <div class="flex items-center space-x-4">
+                                    <button class="text-gray-500 hover:text-primary transition-custom text-sm flex items-center">
+                                        <i class="far fa-thumbs-up mr-1"></i> 28
+                                    </button>
+                                    <button class="text-gray-500 hover:text-primary transition-custom text-sm">
+                                        回复
+                                    </button>
+                                </div>
+                                
+                                <!-- 回复 -->
+                                <div class="mt-4 pl-6 border-l-2 border-gray-100">
+                                    <div class="flex items-start gap-3 mt-4">
+                                        <img src="https://design.gemcoder.com/staticResource/echoAiSystemImages/afded1a5a20d90aebab32d8b569095c5.png" alt="作者头像" class="w-10 h-10 rounded-full object-cover">
+                                        <div class="flex-1">
+                                            <div class="flex items-center justify-between mb-1">
+                                                <h5 class="font-semibold text-sm">张明 <span class="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">作者</span></h5>
+                                                <span class="text-xs text-gray-500">1天前</span>
+                                            </div>
+                                            <p class="text-gray-700 text-sm">谢谢你的反馈！很高兴这篇文章对你有帮助。Tailwind确实有一个学习曲线，但一旦习惯了它的思维方式，开发效率会大大提高。</p>
+                                            <div class="flex items-center space-x-4 mt-2">
+                                                <button class="text-gray-500 hover:text-primary transition-custom text-xs flex items-center">
+                                                    <i class="far fa-thumbs-up mr-1"></i> 12
+                                                </button>
+                                                <button class="text-gray-500 hover:text-primary transition-custom text-xs">
+                                                    回复
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 评论2 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-start gap-4">
+                            <img src="https://design.gemcoder.com/staticResource/echoAiSystemImages/36bca55d3ede3fc71062805afff5ffdf.png" alt="评论者头像" class="w-12 h-12 rounded-full object-cover">
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-semibold">王建国</h4>
+                                    <span class="text-sm text-gray-500">3天前</span>
+                                </div>
+                                <p class="text-gray-700 mb-4">我一直在使用Styled Components，想尝试一下Tailwind。你觉得在大型项目中，Tailwind和CSS-in-JS方案哪个更有优势？</p>
+                                <div class="flex items-center space-x-4">
+                                    <button class="text-gray-500 hover:text-primary transition-custom text-sm flex items-center">
+                                        <i class="far fa-thumbs-up mr-1"></i> 15
+                                    </button>
+                                    <button class="text-gray-500 hover:text-primary transition-custom text-sm">
+                                        回复
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 评论3 -->
+                    <div class="bg-white p-6 rounded-xl shadow-sm">
+                        <div class="flex items-start gap-4">
+                            <img src="https://design.gemcoder.com/staticResource/echoAiSystemImages/56e1809e2b0f64002424b1db08ddfd91.png" alt="评论者头像" class="w-12 h-12 rounded-full object-cover">
+                            <div class="flex-1">
+                                <div class="flex items-center justify-between mb-2">
+                                    <h4 class="font-semibold">刘芳</h4>
+                                    <span class="text-sm text-gray-500">1周前</span>
+                                </div>
+                                <p class="text-gray-700 mb-4">文章中提到的响应式设计部分非常实用！我一直觉得媒体查询很麻烦，Tailwind的响应式前缀确实简化了这个过程。请问你有没有关于Tailwind与动画结合的技巧可以分享？</p>
+                                <div class="flex items-center space-x-4">
+                                    <button class="text-gray-500 hover:text-primary transition-custom text-sm flex items-center">
+                                        <i class="far fa-thumbs-up mr-1"></i> 21
+                                    </button>
+                                    <button class="text-gray-500 hover:text-primary transition-custom text-sm">
+                                        回复
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 加载更多评论 -->
+                    <div class="text-center">
+                        <button class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-custom font-medium">
+                            加载更多评论
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+    <!-- 页脚 -->
+    <footer class='bg-dark text-white py-12'>
+        <div class='container mx-auto px-4 sm:px-6 lg:px-8'>
+            <div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10'>
+                <div>
+                    <div class='flex items-center space-x-2 mb-6'>
+                        <div class='w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary'>
+                            <i class='fas fa-code text-xl'></i>
+                        </div>
+                        <span class='text-xl font-bold'>个人网站</span>
+                    </div>
+                    <p class='text-gray-400 mb-6'>
+                        专注于前端开发和用户体验设计，热衷于创造美观且实用的数字产品。
+                    </p>
+                    <div class='flex space-x-4'>
+                        <a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>
+                            <i class='fab fa-github'></i>
+                        </a>
+                        <a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>
+                            <i class='fab fa-linkedin'></i>
+                        </a>
+                        <a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>
+                            <i class='fab fa-twitter'></i>
+                        </a>
+                        <a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>
+                            <i class='fab fa-dribbble'></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class='text-lg font-bold mb-6'>快速链接</h4>
+                    <ul class='space-y-3'>
+                        <li>
+                            <a class='text-gray-400 hover:text-white transition-custom' href='#home'>首页</a>
+                        </li>
+                        <li>
+                            <a class='text-gray-400 hover:text-white transition-custom' href='#about'>关于我</a>
+                        </li>
+                        <li>
+                            <a class='text-gray-400 hover:text-white transition-custom' href='#skills'>技能</a>
+                        </li>
+                        <li>
+                            <a class='text-gray-400 hover:text-white transition-custom' href='#projects'>项目</a>
+                        </li>
+                        <li>
+                            <a class='text-gray-400 hover:text-white transition-custom' href='#blog'>博客</a>
+                        </li>
+                        <li>
+                            <a class='text-gray-400 hover:text-white transition-custom' href='#contact'>联系</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class='text-lg font-bold mb-6'>服务</h4>
+                    <ul class='space-y-3'>
+                        <li>
+                            <a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>网站开发</a>
+                        </li>
+                        <li>
+                            <a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>应用开发</a>
+                        </li>
+                        <li>
+                            <a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>UI/UX设计</a>
+                        </li>
+                        <li>
+                            <a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>响应式设计</a>
+                        </li>
+                        <li>
+                            <a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>性能优化</a>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class='text-lg font-bold mb-6'>订阅通讯</h4>
+                    <p class='text-gray-400 mb-4'>
+                        订阅我的通讯，获取最新的技术资讯和项目更新
+                    </p>
+                    <form class='flex'>
+                        <input class='px-4 py-2 rounded-l-lg w-full focus:outline-none text-gray-800' placeholder='您的邮箱地址' type='email'/>
+                        <button class='bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-r-lg transition-custom' type='submit'>
+                            <i class='fas fa-paper-plane'></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class='border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center'>
+                <p class='text-gray-400 text-sm'>
+                    © 2023 个人网站. 保留所有权利.
+                </p>
+                <div class='flex space-x-6 mt-4 md:mt-0'>
+                    <a class='text-gray-400 hover:text-white text-sm transition-custom' href='javascript:void(0);'>隐私政策</a>
+                    <a class='text-gray-400 hover:text-white text-sm transition-custom' href='javascript:void(0);'>服务条款</a>
+                    <a class='text-gray-400 hover:text-white text-sm transition-custom' href='javascript:void(0);'>Cookie政策</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script>
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            // 移动端菜单切换
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            menuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            
+            // 导航栏滚动效果
+            const navbar = document.getElementById('navbar');
+            let lastScrollTop = 0;
+            
+            window.addEventListener('scroll', () => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                
+                if (scrollTop > 50) {
+                    navbar.classList.add('shadow-md');
+                    navbar.classList.remove('shadow-sm');
+                } else {
+                    navbar.classList.remove('shadow-md');
+                    navbar.classList.add('shadow-sm');
+                }
+                
+                lastScrollTop = scrollTop;
+            });
+            
+            // 平滑滚动
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 80,
+                            behavior: 'smooth'
+                        });
+                        
+                        // 如果是移动端，点击后关闭菜单
+                        if (!mobileMenu.classList.contains('hidden')) {
+                            mobileMenu.classList.add('hidden');
+                        }
+                    }
+                });
+            });
+            
+            // 评论点赞功能
+            document.querySelectorAll('.far.fa-thumbs-up').forEach(thumb => {
+                thumb.addEventListener('click', function() {
+                    this.classList.toggle('far');
+                    this.classList.toggle('fas');
+                    this.classList.toggle('text-primary');
+                    
+                    const countElement = this.nextElementSibling;
+                    let count = parseInt(countElement.textContent);
+                    
+                    if (this.classList.contains('fas')) {
+                        countElement.textContent = count + 1;
+                    } else {
+                        countElement.textContent = count - 1;
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

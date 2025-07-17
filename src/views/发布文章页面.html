@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发布文章 - 个人网站</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#3B82F6',
+                        secondary: '#64748B',
+                        dark: '#1E293B',
+                        light: '#F8FAFC'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .transition-custom {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .editor-toolbar {
+                @apply flex flex-wrap gap-2 p-3 bg-gray-50 border border-gray-200 rounded-t-lg;
+            }
+            .editor-toolbar button {
+                @apply p-2 rounded hover:bg-gray-200 transition-custom;
+            }
+            .editor-toolbar button.active {
+                @apply bg-primary/10 text-primary;
+            }
+            .form-input-focus {
+                @apply focus:ring-2 focus:ring-primary/50 focus:border-primary transition-custom;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-dark">
+    <!-- 导航栏 -->
+    <header class='fixed w-full bg-white/90 backdrop-blur-sm z-50 transition-custom shadow-sm' id='navbar'>
+        <div class='container mx-auto px-4 sm:px-6 lg:px-8'>
+            <div class='flex justify-between items-center h-16'>
+                <div class='flex items-center'>
+                    <a class='flex items-center space-x-2' href='javascript:void(0);'>
+                        <div class='w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white'>
+                            <i class='fas fa-code text-xl'></i>
+                        </div>
+                        <span class='text-xl font-bold text-dark'>个人网站</span>
+                    </a>
+                </div>
+                <!-- 桌面导航 -->
+                <nav class='hidden md:flex space-x-8'>
+                    <a class='text-gray-600 hover:text-primary font-medium transition-custom' href='javascript:void(0);'>首页</a>
+                    <a class='text-gray-600 hover:text-primary font-medium transition-custom' href='javascript:void(0);'>关于我</a>
+                    <a class='text-gray-600 hover:text-primary font-medium transition-custom' href='javascript:void(0);'>技能</a>
+                    <a class='text-gray-600 hover:text-primary font-medium transition-custom' href='javascript:void(0);'>项目</a>
+                    <a class='text-gray-600 hover:text-primary font-medium transition-custom' href='javascript:void(0);'>博客</a>
+                    <a class='text-primary font-medium transition-custom' href='javascript:void(0);'>发布文章</a>
+                </nav>
+                <!-- 移动端菜单按钮 -->
+                <div class='md:hidden'>
+                    <button class='text-gray-600 hover:text-primary focus:outline-none' id='menu-toggle'>
+                        <i class='fas fa-bars text-xl'></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- 移动端导航菜单 -->
+        <div class='hidden md:hidden bg-white border-t' id='mobile-menu'>
+            <div class='container mx-auto px-4 py-3 space-y-3'>
+                <a class='block py-2 text-gray-600 hover:text-primary font-medium' href='javascript:void(0);'>首页</a>
+                <a class='block py-2 text-gray-600 hover:text-primary font-medium' href='javascript:void(0);'>关于我</a>
+                <a class='block py-2 text-gray-600 hover:text-primary font-medium' href='javascript:void(0);'>技能</a>
+                <a class='block py-2 text-gray-600 hover:text-primary font-medium' href='javascript:void(0);'>项目</a>
+                <a class='block py-2 text-gray-600 hover:text-primary font-medium' href='javascript:void(0);'>博客</a>
+                <a class='block py-2 text-primary font-medium' href='javascript:void(0);'>发布文章</a>
+            </div>
+        </div>
+    </header>
+    <!-- 主内容区 -->
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-16">
+        <div class="max-w-4xl mx-auto">
+            <div class="mb-8">
+                <h1 class="text-[clamp(1.8rem,4vw,2.5rem)] font-bold text-dark mb-2">发布新文章</h1>
+                <p class="text-gray-600">创建并分享您的知识和见解</p>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm p-6 mb-8">
+                <form id="article-form">
+                    <!-- 文章标题 -->
+                    <div class="mb-6">
+                        <label for="title" class="block text-sm font-medium text-gray-700 mb-1">文章标题 <span class="text-red-500">*</span></label>
+                        <input type="text" id="title" name="title" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input-focus"
+                            placeholder="输入吸引人的文章标题...">
+                    </div>
+                    <!-- 文章摘要 -->
+                    <div class="mb-6">
+                        <label for="excerpt" class="block text-sm font-medium text-gray-700 mb-1">文章摘要 <span class="text-red-500">*</span></label>
+                        <textarea id="excerpt" name="excerpt" rows="3" required
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input-focus"
+                            placeholder="简要描述文章内容，将显示在文章列表中..."></textarea>
+                    </div>
+                    <!-- 文章分类和标签 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="category" class="block text-sm font-medium text-gray-700 mb-1">文章分类 <span class="text-red-500">*</span></label>
+                            <select id="category" name="category" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input-focus">
+                                <option value="">选择分类</option>
+                                <option value="technology">技术</option>
+                                <option value="design">设计</option>
+                                <option value="development">开发</option>
+                                <option value="tutorial">教程</option>
+                                <option value="other">其他</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="tags" class="block text-sm font-medium text-gray-700 mb-1">标签</label>
+                            <input type="text" id="tags" name="tags" 
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg form-input-focus"
+                                placeholder="输入标签，用逗号分隔...">
+                        </div>
+                    </div>
+                    <!-- 特色图片 -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">特色图片</label>
+                        <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary transition-custom cursor-pointer" id="featured-image-container">
+                            <input type="file" id="featured-image" name="featured-image" class="hidden" accept="image/*">
+                            <i class="fas fa-cloud-upload-alt text-3xl text-gray-400 mb-2"></i>
+                            <p class="text-gray-500">点击上传图片或拖放至此处</p>
+                            <p class="text-xs text-gray-400 mt-1">支持 JPG, PNG, GIF (最大 10MB)</p>
+                        </div>
+                        <div id="image-preview" class="mt-4 hidden">
+                            <img id="preview-img" src="" alt="预览图片" class="max-h-64 rounded-lg shadow-sm">
+                            <button type="button" id="remove-image" class="mt-2 text-sm text-red-500 hover:text-red-700 transition-custom">
+                                <i class="fas fa-times mr-1"></i> 移除图片
+                            </button>
+                        </div>
+                    </div>
+                    <!-- 文章内容编辑器 -->
+                    <div class="mb-6">
+                        <label for="content" class="block text-sm font-medium text-gray-700 mb-2">文章内容 <span class="text-red-500">*</span></label>
+                        
+                        <!-- 编辑器工具栏 -->
+                        <div class="editor-toolbar">
+                            <button type="button" class="editor-btn" data-command="bold" title="加粗"><i class="fas fa-bold"></i></button>
+                            <button type="button" class="editor-btn" data-command="italic" title="斜体"><i class="fas fa-italic"></i></button>
+                            <button type="button" class="editor-btn" data-command="underline" title="下划线"><i class="fas fa-underline"></i></button>
+                            <button type="button" class="editor-btn" data-command="strikeThrough" title="删除线"><i class="fas fa-strikethrough"></i></button>
+                            <div class="h-6 border-r border-gray-300 mx-1"></div>
+                            <button type="button" class="editor-btn" data-command="justifyLeft" title="左对齐"><i class="fas fa-align-left"></i></button>
+                            <button type="button" class="editor-btn" data-command="justifyCenter" title="居中对齐"><i class="fas fa-align-center"></i></button>
+                            <button type="button" class="editor-btn" data-command="justifyRight" title="右对齐"><i class="fas fa-align-right"></i></button>
+                            <button type="button" class="editor-btn" data-command="justifyFull" title="两端对齐"><i class="fas fa-align-justify"></i></button>
+                            <div class="h-6 border-r border-gray-300 mx-1"></div>
+                            <button type="button" class="editor-btn" data-command="insertUnorderedList" title="无序列表"><i class="fas fa-list-ul"></i></button>
+                            <button type="button" class="editor-btn" data-command="insertOrderedList" title="有序列表"><i class="fas fa-list-ol"></i></button>
+                            <button type="button" class="editor-btn" data-command="indent" title="增加缩进"><i class="fas fa-indent"></i></button>
+                            <button type="button" class="editor-btn" data-command="outdent" title="减少缩进"><i class="fas fa-outdent"></i></button>
+                            <div class="h-6 border-r border-gray-300 mx-1"></div>
+                            <button type="button" class="editor-btn" data-command="formatBlock" data-value="<h1>" title="标题 1"><i class="fas fa-heading"></i> H1</button>
+                            <button type="button" class="editor-btn" data-command="formatBlock" data-value="<h2>" title="标题 2"><i class="fas fa-heading"></i> H2</button>
+                            <button type="button" class="editor-btn" data-command="formatBlock" data-value="<h3>" title="标题 3"><i class="fas fa-heading"></i> H3</button>
+                            <button type="button" class="editor-btn" data-command="formatBlock" data-value="<p>" title="段落"><i class="fas fa-paragraph"></i></button>
+                            <div class="h-6 border-r border-gray-300 mx-1"></div>
+                            <button type="button" class="editor-btn" data-command="createLink" title="插入链接"><i class="fas fa-link"></i></button>
+                            <button type="button" class="editor-btn" data-command="unlink" title="移除链接"><i class="fas fa-unlink"></i></button>
+                            <button type="button" class="editor-btn" id="insert-image-btn" title="插入图片"><i class="fas fa-image"></i></button>
+                            <input type="file" id="inline-image" class="hidden" accept="image/*">
+                        </div>
+                        
+                        <!-- 编辑器内容区域 -->
+                        <div id="content" name="content" contenteditable="true" required
+                            class="w-full min-h-[400px] px-4 py-3 border border-gray-300 border-t-0 rounded-b-lg form-input-focus outline-none"
+                            placeholder="开始编写您的文章内容..."></div>
+                    </div>
+                    <!-- 发布设置 -->
+                    <div class="mb-8 bg-gray-50 p-4 rounded-lg">
+                        <h3 class="font-medium text-gray-800 mb-3 flex items-center">
+                            <i class="fas fa-cog text-primary mr-2"></i> 发布设置
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="flex items-center">
+                                <input type="checkbox" id="publish-immediately" name="publish-immediately" checked
+                                    class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                                <label for="publish-immediately" class="ml-2 block text-sm text-gray-700">立即发布</label>
+                            </div>
+                            <div id="publish-date-container" class="hidden">
+                                <label for="publish-date" class="block text-sm font-medium text-gray-700 mb-1">预定发布日期</label>
+                                <input type="datetime-local" id="publish-date" name="publish-date"
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg form-input-focus">
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="allow-comments" name="allow-comments" checked
+                                    class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                                <label for="allow-comments" class="ml-2 block text-sm text-gray-700">允许评论</label>
+                            </div>
+                            <div class="flex items-center">
+                                <input type="checkbox" id="featured-post" name="featured-post"
+                                    class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded">
+                                <label for="featured-post" class="ml-2 block text-sm text-gray-700">设为精选文章</label>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 操作按钮 -->
+                    <div class="flex flex-col sm:flex-row justify-end gap-4">
+                        <button type="button" id="save-draft"
+                            class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-custom flex items-center justify-center">
+                            <i class="fas fa-save mr-2"></i> 保存草稿
+                        </button>
+                        <button type="submit"
+                            class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom flex items-center justify-center">
+                            <i class="fas fa-paper-plane mr-2"></i> 发布文章
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+    <!-- 页脚 -->
+    <footer class='bg-dark text-white py-12'>
+        <div class='container mx-auto px-4 sm:px-6 lg:px-8'>
+            <div class='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10'>
+                <div>
+                    <div class='flex items-center space-x-2 mb-6'>
+                        <div class='w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary'>
+                            <i class='fas fa-code text-xl'></i>
+                        </div>
+                        <span class='text-xl font-bold'>个人网站</span>
+                    </div>
+                    <p class='text-gray-400 mb-6'>
+                        专注于前端开发和用户体验设计，热衷于创造美观且实用的数字产品。
+                    </p>
+                    <div class='flex space-x-4'>
+                        <a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>
+                            <i class='fab fa-github'></i>
+                        </a>
+                        <a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>
+                            <i class='fab fa-linkedin'></i>
+                        </a>
+                        <a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>
+                            <i class='fab fa-twitter'></i>
+                        </a>
+                        <a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>
+                            <i class='fab fa-dribbble'></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class='text-lg font-bold mb-6'>快速链接</h4>
+                    <ul class='space-y-3'>
+                        <li><a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>首页</a></li>
+                        <li><a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>关于我</a></li>
+                        <li><a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>技能</a></li>
+                        <li><a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>项目</a></li>
+                        <li><a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>博客</a></li>
+                        <li><a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>联系</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class='text-lg font-bold mb-6'>服务</h4>
+                    <ul class='space-y-3'>
+                        <li><a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>网站开发</a></li>
+                        <li><a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>应用开发</a></li>
+                        <li><a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>UI/UX设计</a></li>
+                        <li><a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>响应式设计</a></li>
+                        <li><a class='text-gray-400 hover:text-white transition-custom' href='javascript:void(0);'>性能优化</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class='text-lg font-bold mb-6'>订阅通讯</h4>
+                    <p class='text-gray-400 mb-4'>
+                        订阅我的通讯，获取最新的技术资讯和项目更新
+                    </p>
+                    <form class='flex'>
+                        <input class='px-4 py-2 rounded-l-lg w-full focus:outline-none text-gray-800' placeholder='您的邮箱地址' type='email'/>
+                        <button class='bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-r-lg transition-custom' type='submit'>
+                            <i class='fas fa-paper-plane'></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+            <div class='border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center'>
+                <p class='text-gray-400 text-sm'>
+                    © 2023 个人网站. 保留所有权利.
+                </p>
+                <div class='flex space-x-6 mt-4 md:mt-0'>
+                    <a class='text-gray-400 hover:text-white text-sm transition-custom' href='javascript:void(0);'>隐私政策</a>
+                    <a class='text-gray-400 hover:text-white text-sm transition-custom' href='javascript:void(0);'>服务条款</a>
+                    <a class='text-gray-400 hover:text-white text-sm transition-custom' href='javascript:void(0);'>Cookie政策</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- 模态框 - 确认发布 -->
+    <div id="publish-modal" class="fixed inset-0 bg-black/50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 transform transition-all">
+            <div class="p-6">
+                <h3 class="text-lg font-medium text-gray-900 mb-2">确认发布文章</h3>
+                <p class="text-gray-600 mb-4">您确定要发布这篇文章吗？发布后将对所有访问者可见。</p>
+                <div class="flex justify-end space-x-3">
+                    <button id="cancel-publish" class="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50 transition-custom">取消</button>
+                    <button id="confirm-publish" class="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary/90 transition-custom">确认发布</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 成功提示 -->
+    <div id="success-toast" class="fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg transform translate-y-20 opacity-0 transition-all duration-300 flex items-center">
+        <i class="fas fa-check-circle mr-2"></i>
+        <span id="toast-message">操作成功！</span>
+    </div>
+    <script>
+        // 页面加载时初始化渲染
+        document.addEventListener('DOMContentLoaded', () => {
+            // 导航栏滚动效果
+            const navbar = document.getElementById('navbar');
+            window.addEventListener('scroll', () => {
+                if (window.scrollY > 10) {
+                    navbar.classList.add('shadow-md');
+                    navbar.classList.remove('shadow-sm');
+                } else {
+                    navbar.classList.remove('shadow-md');
+                    navbar.classList.add('shadow-sm');
+                }
+            });
+            // 移动端菜单切换
+            const menuToggle = document.getElementById('menu-toggle');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            menuToggle.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+            // 编辑器工具栏按钮功能
+            const editorButtons = document.querySelectorAll('.editor-btn');
+            const contentEditor = document.getElementById('content');
+            
+            editorButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const command = button.getAttribute('data-command');
+                    const value = button.getAttribute('data-value') || null;
+                    
+                    // 执行文档命令
+                    document.execCommand(command, false, value);
+                    
+                    // 聚焦回编辑器
+                    contentEditor.focus();
+                    
+                    // 更新按钮激活状态
+                    updateEditorButtonStates();
+                });
+            });
+            // 监听编辑器内容变化，更新按钮状态
+            contentEditor.addEventListener('input', updateEditorButtonStates);
+            contentEditor.addEventListener('mouseup', updateEditorButtonStates);
+            contentEditor.addEventListener('keyup', updateEditorButtonStates);
+            // 更新编辑器按钮激活状态
+            function updateEditorButtonStates() {
+                editorButtons.forEach(button => {
+                    const command = button.getAttribute('data-command');
+                    const value = button.getAttribute('data-value') || null;
+                    
+                    if (document.queryCommandState(command)) {
+                        button.classList.add('active');
+                    } else {
+                        button.classList.remove('active');
+                    }
+                });
+            }
+            // 插入链接功能
+            document.querySelector('[data-command="createLink"]').addEventListener('click', () => {
+                const url = prompt('请输入链接地址:');
+                if (url) {
+                    document.execCommand('createLink', false, url);
+                    contentEditor.focus();
+                }
+            });
+            // 插入图片功能
+            const insertImageBtn = document.getElementById('insert-image-btn');
+            const inlineImageInput = document.getElementById('inline-image');
+            
+            insertImageBtn.addEventListener('click', () => {
+                inlineImageInput.click();
+            });
+            
+            inlineImageInput.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = (event) => {
+                        const img = document.createElement('img');
+                        img.src = event.target.result;
+                        img.className = 'max-w-full h-auto my-4 rounded-lg shadow-sm';
+                        
+                        // 在光标位置插入图片
+                        const selection = window.getSelection();
+                        if (selection.rangeCount > 0) {
+                            const range = selection.getRangeAt(0);
+                            range.deleteContents();
+                            range.insertNode(img);
+                            
+                            // 在图片后添加一个换行
+                            const br = document.createElement('br');
+                            range.insertNode(br);
+                        }
+                    };
+                    
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+            // 特色图片上传预览
+            const featuredImageContainer = document.getElementById('featured-image-container');
+            const featuredImageInput = document.getElementById('featured-image');
+            const imagePreview = document.getElementById('image-preview');
+            const previewImg = document.getElementById('preview-img');
+            const removeImageBtn = document.getElementById('remove-image');
+            
+            featuredImageContainer.addEventListener('click', () => {
+                featuredImageInput.click();
+            });
+            
+            featuredImageInput.addEventListener('change', (e) => {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = (event) => {
+                        previewImg.src = event.target.result;
+                        imagePreview.classList.remove('hidden');
+                        featuredImageContainer.classList.add('hidden');
+                    };
+                    
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+            
+            removeImageBtn.addEventListener('click', () => {
+                featuredImageInput.value = '';
+                imagePreview.classList.add('hidden');
+                featuredImageContainer.classList.remove('hidden');
+            });
+            // 拖放上传功能
+            featuredImageContainer.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                featuredImageContainer.classList.add('border-primary');
+                featuredImageContainer.classList.add('bg-primary/5');
+            });
+            
+            featuredImageContainer.addEventListener('dragleave', () => {
+                featuredImageContainer.classList.remove('border-primary');
+                featuredImageContainer.classList.remove('bg-primary/5');
+            });
+            
+            featuredImageContainer.addEventListener('drop', (e) => {
+                e.preventDefault();
+                featuredImageContainer.classList.remove('border-primary');
+                featuredImageContainer.classList.remove('bg-primary/5');
+                
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                    const reader = new FileReader();
+                    
+                    reader.onload = (event) => {
+                        previewImg.src = event.target.result;
+                        imagePreview.classList.remove('hidden');
+                        featuredImageContainer.classList.add('hidden');
+                        
+                        // 将文件设置到input中
+                        const dt = new DataTransfer();
+                        dt.items.add(e.dataTransfer.files[0]);
+                        featuredImageInput.files = dt.files;
+                    };
+                    
+                    reader.readAsDataURL(e.dataTransfer.files[0]);
+                }
+            });
+            // 发布设置 - 立即发布切换
+            const publishImmediately = document.getElementById('publish-immediately');
+            const publishDateContainer = document.getElementById('publish-date-container');
+            
+            publishImmediately.addEventListener('change', () => {
+                if (publishImmediately.checked) {
+                    publishDateContainer.classList.add('hidden');
+                } else {
+                    publishDateContainer.classList.remove('hidden');
+                    
+                    // 设置默认日期为当前时间
+                    if (!document.getElementById('publish-date').value) {
+                        const now = new Date();
+                        const dateTimeStr = now.toISOString().slice(0, 16);
+                        document.getElementById('publish-date').value = dateTimeStr;
+                    }
+                }
+            });
+            // 表单提交处理
+            const articleForm = document.getElementById('article-form');
+            const publishModal = document.getElementById('publish-modal');
+            const cancelPublishBtn = document.getElementById('cancel-publish');
+            const confirmPublishBtn = document.getElementById('confirm-publish');
+            const saveDraftBtn = document.getElementById('save-draft');
+            const successToast = document.getElementById('success-toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            articleForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                publishModal.classList.remove('hidden');
+            });
+            
+            cancelPublishBtn.addEventListener('click', () => {
+                publishModal.classList.add('hidden');
+            });
+            
+            confirmPublishBtn.addEventListener('click', () => {
+                // 模拟表单提交
+                publishModal.classList.add('hidden');
+                
+                // 显示成功提示
+                toastMessage.textContent = '文章发布成功！';
+                showToast();
+                
+                // 重置表单
+                articleForm.reset();
+                imagePreview.classList.add('hidden');
+                featuredImageContainer.classList.remove('hidden');
+                contentEditor.innerHTML = '';
+            });
+            
+            saveDraftBtn.addEventListener('click', () => {
+                // 模拟保存草稿
+                toastMessage.textContent = '草稿保存成功！';
+                showToast();
+            });
+            
+            // 显示提示消息
+            function showToast() {
+                successToast.classList.remove('translate-y-20', 'opacity-0');
+                
+                // 3秒后隐藏
+                setTimeout(() => {
+                    successToast.classList.add('translate-y-20', 'opacity-0');
+                }, 3000);
+            }
+            // 点击模态框外部关闭
+            publishModal.addEventListener('click', (e) => {
+                if (e.target === publishModal) {
+                    publishModal.classList.add('hidden');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

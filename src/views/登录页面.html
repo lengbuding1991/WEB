@@ -1,0 +1,915 @@
+<html lang="zh-CN">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+  <title>
+   登录页面
+  </title>
+  <script src="https://res.gemcoder.com/js/reload.js">
+  </script>
+  <script src="https://cdn.tailwindcss.com">
+  </script>
+  <link href="https://cdn.bootcdn.net/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet"/>
+  <script>
+   tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: '#3B82F6',
+        dark: '#1E293B',
+        light: '#F8FAFC'
+      },
+      fontFamily: {
+        inter: ['Inter', 'sans-serif']
+      }
+    }
+  }
+};
+  </script>
+  <style type="text/tailwindcss">
+   @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+            .transition-custom {
+                transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+            .card-shadow {
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            }
+            .input-focus {
+                @apply focus:ring-2 focus:ring-primary/50 focus:border-primary;
+            }
+        }
+  </style>
+ </head>
+ <body class="bg-gray-50 font-inter text-dark">
+  <!-- 导航栏 -->
+  <header class="fixed w-full bg-white/90 backdrop-blur-sm z-50 transition-custom shadow-sm" id="navbar">
+   <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex justify-between items-center h-16">
+     <div class="flex items-center">
+      <a class="flex items-center space-x-2" href="javascript:void(0);">
+       <div class="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white">
+        <i class="fas fa-code text-xl">
+        </i>
+       </div>
+       <span class="text-xl font-bold text-dark">
+        博客平台
+       </span>
+      </a>
+     </div>
+     <!-- 桌面导航 -->
+     <nav class="hidden md:flex space-x-8" id="desktop-nav">
+      <a class="text-gray-600 hover:text-primary font-medium transition-custom" href="javascript:void(0);">
+       首页
+      </a>
+      <a class="text-gray-600 hover:text-primary font-medium transition-custom" href="javascript:void(0);">
+       文章
+      </a>
+      <a class="text-gray-600 hover:text-primary font-medium transition-custom hidden" href="javascript:void(0);" id="publish-link">
+       发布文章
+      </a>
+      <a class="text-gray-600 hover:text-primary font-medium transition-custom" href="javascript:void(0);">
+       关于
+      </a>
+      <a class="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-custom" href="javascript:void(0);" id="login-btn">
+       登录
+      </a>
+      <a class="hidden bg-gray-200 text-dark px-4 py-2 rounded-lg hover:bg-gray-300 transition-custom" href="javascript:void(0);" id="logout-btn">
+       退出
+      </a>
+     </nav>
+     <!-- 移动端菜单按钮 -->
+     <div class="md:hidden">
+      <button class="text-gray-600 hover:text-primary focus:outline-none" id="menu-toggle">
+       <i class="fas fa-bars text-xl">
+       </i>
+      </button>
+     </div>
+    </div>
+   </div>
+   <!-- 移动端导航菜单 -->
+   <div class="hidden md:hidden bg-white border-t" id="mobile-menu">
+    <div class="container mx-auto px-4 py-3 space-y-3">
+     <a class="block py-2 text-gray-600 hover:text-primary font-medium" href="javascript:void(0);">
+      首页
+     </a>
+     <a class="block py-2 text-gray-600 hover:text-primary font-medium" href="javascript:void(0);">
+      文章
+     </a>
+     <a class="block py-2 text-gray-600 hover:text-primary font-medium hidden" href="javascript:void(0);" id="mobile-publish-link">
+      发布文章
+     </a>
+     <a class="block py-2 text-gray-600 hover:text-primary font-medium" href="javascript:void(0);">
+      关于
+     </a>
+     <a class="block py-2 text-white bg-primary rounded-lg text-center hover:bg-primary/90 transition-custom" href="javascript:void(0);" id="mobile-login-btn">
+      登录
+     </a>
+     <a class="block py-2 text-dark bg-gray-200 rounded-lg text-center hover:bg-gray-300 transition-custom hidden" href="javascript:void(0);" id="mobile-logout-btn">
+      退出
+     </a>
+    </div>
+   </div>
+  </header>
+  <!-- 主内容区 -->
+  <main class="pt-24 pb-16 min-h-screen">
+   <!-- 登录模态框 -->
+   <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden" id="login-modal">
+    <div class="bg-white rounded-2xl w-full max-w-md mx-4 overflow-hidden transform transition-all scale-95 opacity-0" id="modal-content">
+     <div class="p-6 sm:p-8">
+      <div class="flex justify-between items-center mb-6">
+       <h2 class="text-2xl font-bold text-dark">
+        用户登录
+       </h2>
+       <button class="text-gray-400 hover:text-gray-600 transition-custom" id="close-modal">
+        <i class="fas fa-times text-xl">
+        </i>
+       </button>
+      </div>
+      <form class="space-y-5" id="login-form">
+       <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1" for="email">
+         邮箱地址
+        </label>
+        <div class="relative">
+         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <i class="fas fa-envelope text-gray-400">
+          </i>
+         </div>
+         <input class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg input-focus transition-custom" id="email" name="email" placeholder="请输入您的邮箱" required="" type="email"/>
+        </div>
+       </div>
+       <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1" for="password">
+         密码
+        </label>
+        <div class="relative">
+         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <i class="fas fa-lock text-gray-400">
+          </i>
+         </div>
+         <input class="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg input-focus transition-custom" id="password" name="password" placeholder="请输入您的密码" required="" type="password"/>
+         <button class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 transition-custom" id="toggle-password" type="button">
+          <i class="fas fa-eye-slash">
+          </i>
+         </button>
+        </div>
+       </div>
+       <div class="flex items-center justify-between">
+        <div class="flex items-center">
+         <input class="h-4 w-4 text-primary focus:ring-primary border-gray-300 rounded" id="remember-me" name="remember-me" type="checkbox"/>
+         <label class="ml-2 block text-sm text-gray-700" for="remember-me">
+          记住我
+         </label>
+        </div>
+        <a class="text-sm font-medium text-primary hover:text-primary/80 transition-custom" href="javascript:void(0);">
+         忘记密码?
+        </a>
+       </div>
+       <button class="w-full bg-primary hover:bg-primary/90 text-white font-medium py-3 px-4 rounded-lg transition-custom flex items-center justify-center" type="submit">
+        <span>
+         登录
+        </span>
+        <i class="fas fa-arrow-right ml-2">
+        </i>
+       </button>
+      </form>
+      <div class="mt-6 text-center">
+       <p class="text-sm text-gray-600">
+        还没有账号?
+        <a class="font-medium text-primary hover:text-primary/80 transition-custom" href="javascript:void(0);">
+         立即注册
+        </a>
+       </p>
+      </div>
+     </div>
+    </div>
+   </div>
+   <!-- 发布文章模态框 -->
+   <div class="fixed inset-0 bg-black/50 z-50 flex items-center justify-center hidden" id="publish-modal">
+    <div class="bg-white rounded-2xl w-full max-w-4xl mx-4 overflow-hidden transform transition-all scale-95 opacity-0" id="publish-modal-content">
+     <div class="p-6 sm:p-8">
+      <div class="flex justify-between items-center mb-6">
+       <h2 class="text-2xl font-bold text-dark">
+        发布新文章
+       </h2>
+       <button class="text-gray-400 hover:text-gray-600 transition-custom" id="close-publish-modal">
+        <i class="fas fa-times text-xl">
+        </i>
+       </button>
+      </div>
+      <form class="space-y-5" id="publish-form">
+       <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1" for="article-title">
+         文章标题
+        </label>
+        <input class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus transition-custom" id="article-title" name="title" placeholder="请输入文章标题" required="" type="text"/>
+       </div>
+       <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1" for="article-category">
+         文章分类
+        </label>
+        <select class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus transition-custom" id="article-category" name="category" required="">
+         <option value="">
+          请选择分类
+         </option>
+         <option value="tech">
+          技术
+         </option>
+         <option value="life">
+          生活
+         </option>
+         <option value="travel">
+          旅行
+         </option>
+         <option value="food">
+          美食
+         </option>
+         <option value="other">
+          其他
+         </option>
+        </select>
+       </div>
+       <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1" for="article-content">
+         文章内容
+        </label>
+        <textarea class="w-full px-4 py-3 border border-gray-300 rounded-lg input-focus transition-custom" id="article-content" name="content" placeholder="请输入文章内容..." required="" rows="10">
+        
+    </textarea>
+       </div>
+       <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">
+         文章封面
+        </label>
+        <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
+         <div class="space-y-1 text-center">
+          <i class="fas fa-cloud-upload-alt text-3xl text-gray-400">
+          </i>
+          <div class="flex text-sm text-gray-600">
+           <label class="relative cursor-pointer bg-white rounded-md font-medium text-primary hover:text-primary/80 transition-custom" for="file-upload">
+            <span>
+             上传图片
+            </span>
+            <input class="sr-only" id="file-upload" name="file-upload" type="file"/>
+           </label>
+           <p class="pl-1">
+            或拖放文件
+           </p>
+          </div>
+          <p class="text-xs text-gray-500">
+           PNG, JPG 或 GIF (最大 10MB)
+          </p>
+         </div>
+        </div>
+       </div>
+       <div class="flex justify-end space-x-3 pt-4 border-t border-gray-200">
+        <button class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-custom" id="cancel-publish" type="button">
+         取消
+        </button>
+        <button class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-custom" type="submit">
+         发布文章
+        </button>
+       </div>
+      </form>
+     </div>
+    </div>
+   </div>
+   <!-- 欢迎区域 -->
+   <section class="container mx-auto px-4 sm:px-6 lg:px-8 mb-16">
+    <div class="flex flex-col md:flex-row items-center">
+     <div class="md:w-1/2 mb-10 md:mb-0 md:pr-10">
+      <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold leading-tight mb-4">
+       分享你的
+       <span class="text-primary">
+        知识
+       </span>
+       与
+       <span class="text-primary">
+        见解
+       </span>
+      </h1>
+      <p class="text-gray-600 text-lg mb-8 max-w-lg">
+       加入我们的博客平台，与全球读者分享你的想法。登录后即可发布文章，开启你的写作之旅。
+      </p>
+      <div class="flex flex-col sm:flex-row gap-4">
+       <button class="bg-primary hover:bg-primary/90 text-white font-medium py-3 px-8 rounded-lg transition-custom flex items-center justify-center" id="hero-login-btn">
+        <i class="fas fa-user-circle mr-2">
+        </i>
+        <span>
+         立即登录
+        </span>
+       </button>
+       <a class="border border-gray-300 hover:border-primary hover:text-primary text-dark font-medium py-3 px-8 rounded-lg transition-custom flex items-center justify-center" href="javascript:void(0);">
+        <i class="fas fa-info-circle mr-2">
+        </i>
+        <span>
+         了解更多
+        </span>
+       </a>
+      </div>
+     </div>
+     <div class="md:w-1/2">
+      <img alt="博客写作概念图" class="w-full h-auto rounded-2xl shadow-xl" src="https://design.gemcoder.com/staticResource/echoAiSystemImages/d5f8d54eb4b1a995f1f45ac5f9e93dc9.png"/>
+     </div>
+    </div>
+   </section>
+   <!-- 特色区域 -->
+   <section class="bg-white py-16">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="text-center mb-16">
+      <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-4">
+       为什么选择我们的平台
+      </h2>
+      <p class="text-gray-600 max-w-2xl mx-auto">
+       我们提供简单易用的工具，帮助你轻松创建、发布和分享精彩内容
+      </p>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div class="bg-gray-50 p-8 rounded-xl card-shadow hover:shadow-lg transition-custom transform hover:-translate-y-1">
+       <div class="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+        <i class="fas fa-pen-to-square text-primary text-2xl">
+        </i>
+       </div>
+       <h3 class="text-xl font-bold mb-3">
+        简单编辑
+       </h3>
+       <p class="text-gray-600">
+        直观的编辑器，让你专注于内容创作，无需担心格式问题。
+       </p>
+      </div>
+      <div class="bg-gray-50 p-8 rounded-xl card-shadow hover:shadow-lg transition-custom transform hover:-translate-y-1">
+       <div class="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+        <i class="fas fa-globe text-primary text-2xl">
+        </i>
+       </div>
+       <h3 class="text-xl font-bold mb-3">
+        全球分享
+       </h3>
+       <p class="text-gray-600">
+        一键发布，让你的文章被世界各地的读者发现和阅读。
+       </p>
+      </div>
+      <div class="bg-gray-50 p-8 rounded-xl card-shadow hover:shadow-lg transition-custom transform hover:-translate-y-1">
+       <div class="w-14 h-14 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+        <i class="fas fa-line-chart text-primary text-2xl">
+        </i>
+       </div>
+       <h3 class="text-xl font-bold mb-3">
+        数据分析
+       </h3>
+       <p class="text-gray-600">
+        详细的统计数据，了解你的读者群体和文章表现。
+       </p>
+      </div>
+     </div>
+    </div>
+   </section>
+   <!-- 最新文章预览 -->
+   <section class="py-16 bg-gray-50">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="flex justify-between items-end mb-10">
+      <div>
+       <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-2">
+        最新文章
+       </h2>
+       <p class="text-gray-600">
+        发现社区中最新发布的精彩内容
+       </p>
+      </div>
+      <a class="hidden md:flex items-center text-primary font-medium hover:text-primary/80 transition-custom" href="javascript:void(0);">
+       <span>
+        查看全部
+       </span>
+       <i class="fas fa-arrow-right ml-2">
+       </i>
+      </a>
+     </div>
+     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <!-- 文章卡片 1 -->
+      <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-custom">
+       <img alt="Web开发文章" class="w-full h-48 object-cover" src="https://design.gemcoder.com/staticResource/echoAiSystemImages/7925516d7fb6d6489144c11a6d05b33c.png"/>
+       <div class="p-6">
+        <div class="flex items-center text-sm text-gray-500 mb-3">
+         <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+          技术
+         </span>
+         <span class="ml-auto">
+          2023-11-15
+         </span>
+        </div>
+        <h3 class="text-xl font-bold mb-2 hover:text-primary transition-custom">
+         <a href="javascript:void(0);">
+          现代JavaScript开发完全指南
+         </a>
+        </h3>
+        <p class="text-gray-600 mb-4 line-clamp-3">
+         探索JavaScript的最新特性和最佳实践，提升你的前端开发技能...
+        </p>
+        <div class="flex items-center justify-between">
+         <div class="flex items-center">
+          <img alt="作者头像" class="w-10 h-10 rounded-full object-cover" src="https://design.gemcoder.com/staticResource/echoAiSystemImages/056a682d57306442cba132133e99daf3.png"/>
+          <span class="ml-3 text-sm font-medium">
+           张开发
+          </span>
+         </div>
+         <span class="text-gray-500 text-sm">
+          <i class="far fa-eye mr-1">
+          </i>
+          2.4k
+         </span>
+        </div>
+       </div>
+      </div>
+      <!-- 文章卡片 2 -->
+      <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-custom">
+       <img alt="旅行文章" class="w-full h-48 object-cover" src="https://design.gemcoder.com/staticResource/echoAiSystemImages/20ccb20158de198898ebf5e5ec709d19.png"/>
+       <div class="p-6">
+        <div class="flex items-center text-sm text-gray-500 mb-3">
+         <span class="bg-green-100 text-green-800 px-3 py-1 rounded-full">
+          旅行
+         </span>
+         <span class="ml-auto">
+          2023-11-10
+         </span>
+        </div>
+        <h3 class="text-xl font-bold mb-2 hover:text-primary transition-custom">
+         <a href="javascript:void(0);">
+          徒步喜马拉雅：我的冒险之旅
+         </a>
+        </h3>
+        <p class="text-gray-600 mb-4 line-clamp-3">
+         记录我在喜马拉雅山脉徒步的难忘经历，壮丽的景色和文化探索...
+        </p>
+        <div class="flex items-center justify-between">
+         <div class="flex items-center">
+          <img alt="作者头像" class="w-10 h-10 rounded-full object-cover" src="https://design.gemcoder.com/staticResource/echoAiSystemImages/33c284769a9cde9bf48288b109cebc99.png"/>
+          <span class="ml-3 text-sm font-medium">
+           李旅行
+          </span>
+         </div>
+         <span class="text-gray-500 text-sm">
+          <i class="far fa-eye mr-1">
+          </i>
+          3.1k
+         </span>
+        </div>
+       </div>
+      </div>
+      <!-- 文章卡片 3 -->
+      <div class="bg-white rounded-xl overflow-hidden card-shadow hover:shadow-lg transition-custom">
+       <img alt="美食文章" class="w-full h-48 object-cover" src="https://design.gemcoder.com/staticResource/echoAiSystemImages/6548c9d5b1cb5f829dd5758af8ce4cbd.png"/>
+       <div class="p-6">
+        <div class="flex items-center text-sm text-gray-500 mb-3">
+         <span class="bg-red-100 text-red-800 px-3 py-1 rounded-full">
+          美食
+         </span>
+         <span class="ml-auto">
+          2023-11-05
+         </span>
+        </div>
+        <h3 class="text-xl font-bold mb-2 hover:text-primary transition-custom">
+         <a href="javascript:void(0);">
+          30分钟健康晚餐：忙碌生活的营养解决方案
+         </a>
+        </h3>
+        <p class="text-gray-600 mb-4 line-clamp-3">
+         为忙碌的工作日设计的简单健康晚餐食谱，营养均衡且制作快速...
+        </p>
+        <div class="flex items-center justify-between">
+         <div class="flex items-center">
+          <img alt="作者头像" class="w-10 h-10 rounded-full object-cover" src="https://design.gemcoder.com/staticResource/echoAiSystemImages/b8f29400541e88fbd6fd109426c30701.png"/>
+          <span class="ml-3 text-sm font-medium">
+           王美食
+          </span>
+         </div>
+         <span class="text-gray-500 text-sm">
+          <i class="far fa-eye mr-1">
+          </i>
+          1.8k
+         </span>
+        </div>
+       </div>
+      </div>
+     </div>
+     <div class="mt-8 text-center md:hidden">
+      <a class="inline-flex items-center text-primary font-medium hover:text-primary/80 transition-custom" href="javascript:void(0);">
+       <span>
+        查看全部文章
+       </span>
+       <i class="fas fa-arrow-right ml-2">
+       </i>
+      </a>
+     </div>
+    </div>
+   </section>
+   <!-- 号召性区域 -->
+   <section class="py-20 bg-primary text-white">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+     <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold mb-6">
+      准备好分享你的故事了吗？
+     </h2>
+     <p class="text-white/80 text-lg max-w-2xl mx-auto mb-10">
+      加入我们的社区，与志同道合的创作者一起成长，让你的声音被更多人听到。
+     </p>
+     <button class="bg-white text-primary hover:bg-gray-100 font-medium py-3 px-8 rounded-lg transition-custom inline-flex items-center" id="cta-login-btn">
+      <i class="fas fa-user-plus mr-2">
+      </i>
+      <span>
+       登录并开始创作
+      </span>
+     </button>
+    </div>
+   </section>
+  </main>
+  <!-- 页脚 -->
+  <footer class="bg-dark text-white py-12">
+   <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
+     <div>
+      <div class="flex items-center space-x-2 mb-6">
+       <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-primary">
+        <i class="fas fa-blog text-xl">
+        </i>
+       </div>
+       <span class="text-xl font-bold">
+        博客平台
+       </span>
+      </div>
+      <p class="text-gray-400 mb-6">
+       一个专注于知识分享和创作的平台，连接创作者与读者，分享有价值的内容。
+      </p>
+      <div class="flex space-x-4">
+       <a class="text-gray-400 hover:text-white transition-custom" href="javascript:void(0);">
+        <i class="fab fa-github">
+        </i>
+       </a>
+       <a class="text-gray-400 hover:text-white transition-custom" href="javascript:void(0);">
+        <i class="fab fa-twitter">
+        </i>
+       </a>
+       <a class="text-gray-400 hover:text-white transition-custom" href="javascript:void(0);">
+        <i class="fab fa-instagram">
+        </i>
+       </a>
+       <a class="text-gray-400 hover:text-white transition-custom" href="javascript:void(0);">
+        <i class="fab fa-linkedin">
+        </i>
+       </a>
+      </div>
+     </div>
+     <div>
+      <h4 class="text-lg font-bold mb-6">
+       快速链接
+      </h4>
+      <ul class="space-y-3">
+       <li>
+        <a class="text-gray-400 hover:text-white transition-custom" href="javascript:void(0);">
+         首页
+        </a>
+       </li>
+       <li>
+        <a class="text-gray-400 hover:text-white transition-custom" href="javascript:void(0);">
+         探索文章
+        </a>
+       </li>
+       <li>
+        <a class="text-gray-400 hover:text-white transition-custom hidden" href="javascript:void(0);" id="footer-publish-link">
+         发布文章
+        </a>
+       </li>
+       <li>
+        <a class="text-gray-400 hover:text-white transition-custom" href="javascript:void(0);">
+         关于我们
+        </a>
+       </li>
+       <li>
+        <a class="text-gray-400 hover:text-white transition-custom" href="javascript:void(0);">
+         联系我们
+        </a>
+       </li>
+      </ul>
+     </div>
+     <div>
+      <h4 class="text-lg font-bold mb-6">
+       支持
+      </h4>
+      <ul class="space-y-3">
+       <li>
+        <a class="text-gray-400 hover:text-white transition-custom" href="javascript:void(0);">
+         帮助中心
+        </a>
+       </li>
+       <li>
+        <a class="text-gray-400 hover:text-white transition-custom" href="javascript:void(0);">
+         社区准则
+        </a>
+       </li>
+       <li>
+        <a class="text-gray-400 hover:text-white transition-custom" href="javascript:void(0);">
+         常见问题
+        </a>
+       </li>
+       <li>
+        <a class="text-gray-400 hover:text-white transition-custom" href="javascript:void(0);">
+         反馈建议
+        </a>
+       </li>
+      </ul>
+     </div>
+     <div>
+      <h4 class="text-lg font-bold mb-6">
+       订阅通讯
+      </h4>
+      <p class="text-gray-400 mb-4">
+       获取最新的平台动态和精选内容
+      </p>
+      <form class="flex">
+       <input class="px-4 py-2 rounded-l-lg w-full focus:outline-none text-gray-800" placeholder="您的邮箱地址" type="email"/>
+       <button class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-r-lg transition-custom" type="submit">
+        <i class="fas fa-paper-plane">
+        </i>
+       </button>
+      </form>
+     </div>
+    </div>
+    <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+     <p class="text-gray-400 text-sm">
+      © 2023 博客平台. 保留所有权利.
+     </p>
+     <div class="flex space-x-6 mt-4 md:mt-0">
+      <a class="text-gray-400 hover:text-white text-sm transition-custom" href="javascript:void(0);">
+       隐私政策
+      </a>
+      <a class="text-gray-400 hover:text-white text-sm transition-custom" href="javascript:void(0);">
+       服务条款
+      </a>
+      <a class="text-gray-400 hover:text-white text-sm transition-custom" href="javascript:void(0);">
+       Cookie政策
+      </a>
+     </div>
+    </div>
+   </div>
+  </footer>
+  <script>
+   // 页面加载时初始化渲染
+document.addEventListener('DOMContentLoaded', function () {
+  // 检查用户是否已登录
+  checkLoginStatus();
+
+  // 导航栏滚动效果
+  var navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', function () {
+    if (window.scrollY > 10) {
+      navbar.classList.add('shadow-md');
+      navbar.classList.remove('shadow-sm');
+    } else {
+      navbar.classList.remove('shadow-md');
+      navbar.classList.add('shadow-sm');
+    }
+  });
+
+  // 移动端菜单切换
+  var menuToggle = document.getElementById('menu-toggle');
+  var mobileMenu = document.getElementById('mobile-menu');
+  menuToggle.addEventListener('click', function () {
+    mobileMenu.classList.toggle('hidden');
+  });
+
+  // 登录模态框相关
+  var loginModal = document.getElementById('login-modal');
+  var modalContent = document.getElementById('modal-content');
+  var loginBtns = [document.getElementById('login-btn'), document.getElementById('mobile-login-btn'), document.getElementById('hero-login-btn'), document.getElementById('cta-login-btn')];
+  var closeModal = document.getElementById('close-modal');
+
+  // 打开登录模态框
+  loginBtns.forEach(function (btn) {
+    if (btn) {
+      btn.addEventListener('click', function () {
+        loginModal.classList.remove('hidden');
+        setTimeout(function () {
+          modalContent.classList.remove('scale-95', 'opacity-0');
+          modalContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+        document.body.style.overflow = 'hidden';
+      });
+    }
+  });
+
+  // 关闭登录模态框
+  closeModal.addEventListener('click', closeLoginModal);
+  loginModal.addEventListener('click', function (e) {
+    if (e.target === loginModal) {
+      closeLoginModal();
+    }
+  });
+  function closeLoginModal() {
+    modalContent.classList.remove('scale-100', 'opacity-100');
+    modalContent.classList.add('scale-95', 'opacity-0');
+    setTimeout(function () {
+      loginModal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }, 300);
+  }
+
+  // 密码显示/隐藏切换
+  var togglePassword = document.getElementById('toggle-password');
+  var passwordInput = document.getElementById('password');
+  togglePassword.addEventListener('click', function () {
+    var type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+    passwordInput.setAttribute('type', type);
+
+    // 切换图标
+    togglePassword.querySelector('i').classList.toggle('fa-eye');
+    togglePassword.querySelector('i').classList.toggle('fa-eye-slash');
+  });
+
+  // 登录表单提交
+  var loginForm = document.getElementById('login-form');
+  loginForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    // 模拟登录过程
+    var email = document.getElementById('email').value;
+    var password = document.getElementById('password').value;
+
+    // 简单验证
+    if (email && password) {
+      // 存储登录状态
+      localStorage.setItem('isLoggedIn', 'true');
+      localStorage.setItem('userEmail', email);
+
+      // 关闭模态框
+      closeLoginModal();
+
+      // 更新UI显示
+      updateLoginUI(true);
+
+      // 显示成功消息
+      showNotification('登录成功！欢迎回来！');
+    } else {
+      showNotification('请输入邮箱和密码', 'error');
+    }
+  });
+
+  // 退出登录功能
+  var logoutBtns = [document.getElementById('logout-btn'), document.getElementById('mobile-logout-btn')];
+  logoutBtns.forEach(function (btn) {
+    if (btn) {
+      btn.addEventListener('click', function () {
+        // 清除登录状态
+        localStorage.removeItem('isLoggedIn');
+        localStorage.removeItem('userEmail');
+
+        // 更新UI显示
+        updateLoginUI(false);
+
+        // 显示成功消息
+        showNotification('已成功退出登录');
+      });
+    }
+  });
+
+  // 发布文章模态框相关
+  var publishModal = document.getElementById('publish-modal');
+  var publishModalContent = document.getElementById('publish-modal-content');
+  var publishLinks = [document.getElementById('publish-link'), document.getElementById('mobile-publish-link'), document.getElementById('footer-publish-link')];
+  var closePublishModal = document.getElementById('close-publish-modal');
+  var cancelPublish = document.getElementById('cancel-publish');
+
+  // 打开发布文章模态框
+  publishLinks.forEach(function (link) {
+    if (link) {
+      link.addEventListener('click', function () {
+        // 检查是否已登录
+        if (!localStorage.getItem('isLoggedIn')) {
+          showNotification('请先登录后再发布文章', 'error');
+          // 自动打开登录模态框
+          loginModal.classList.remove('hidden');
+          setTimeout(function () {
+            modalContent.classList.remove('scale-95', 'opacity-0');
+            modalContent.classList.add('scale-100', 'opacity-100');
+          }, 10);
+          document.body.style.overflow = 'hidden';
+          return;
+        }
+        publishModal.classList.remove('hidden');
+        setTimeout(function () {
+          publishModalContent.classList.remove('scale-95', 'opacity-0');
+          publishModalContent.classList.add('scale-100', 'opacity-100');
+        }, 10);
+        document.body.style.overflow = 'hidden';
+      });
+    }
+  });
+
+  // 关闭发布文章模态框
+  function closePublishModalFunc() {
+    publishModalContent.classList.remove('scale-100', 'opacity-100');
+    publishModalContent.classList.add('scale-95', 'opacity-0');
+    setTimeout(function () {
+      publishModal.classList.add('hidden');
+      document.body.style.overflow = '';
+    }, 300);
+  }
+  closePublishModal.addEventListener('click', closePublishModalFunc);
+  cancelPublish.addEventListener('click', closePublishModalFunc);
+  publishModal.addEventListener('click', function (e) {
+    if (e.target === publishModal) {
+      closePublishModalFunc();
+    }
+  });
+
+  // 发布文章表单提交
+  var publishForm = document.getElementById('publish-form');
+  publishForm.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    // 模拟发布文章过程
+    var title = document.getElementById('article-title').value;
+    if (title) {
+      // 关闭模态框
+      closePublishModalFunc();
+
+      // 重置表单
+      publishForm.reset();
+
+      // 显示成功消息
+      showNotification('文章发布成功！');
+    } else {
+      showNotification('请输入文章标题', 'error');
+    }
+  });
+
+  // 检查登录状态
+  function checkLoginStatus() {
+    var isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    updateLoginUI(isLoggedIn);
+  }
+
+  // 更新登录相关UI
+  function updateLoginUI(isLoggedIn) {
+    var loginBtn = document.getElementById('login-btn');
+    var logoutBtn = document.getElementById('logout-btn');
+    var mobileLoginBtn = document.getElementById('mobile-login-btn');
+    var mobileLogoutBtn = document.getElementById('mobile-logout-btn');
+    var publishLink = document.getElementById('publish-link');
+    var mobilePublishLink = document.getElementById('mobile-publish-link');
+    var footerPublishLink = document.getElementById('footer-publish-link');
+    if (isLoggedIn) {
+      // 已登录状态
+      if (loginBtn) loginBtn.classList.add('hidden');
+      if (logoutBtn) logoutBtn.classList.remove('hidden');
+      if (mobileLoginBtn) mobileLoginBtn.classList.add('hidden');
+      if (mobileLogoutBtn) mobileLogoutBtn.classList.remove('hidden');
+      if (publishLink) publishLink.classList.remove('hidden');
+      if (mobilePublishLink) mobilePublishLink.classList.remove('hidden');
+      if (footerPublishLink) footerPublishLink.classList.remove('hidden');
+    } else {
+      // 未登录状态
+      if (loginBtn) loginBtn.classList.remove('hidden');
+      if (logoutBtn) logoutBtn.classList.add('hidden');
+      if (mobileLoginBtn) mobileLoginBtn.classList.remove('hidden');
+      if (mobileLogoutBtn) mobileLogoutBtn.classList.add('hidden');
+      if (publishLink) publishLink.classList.add('hidden');
+      if (mobilePublishLink) mobilePublishLink.classList.add('hidden');
+      if (footerPublishLink) footerPublishLink.classList.add('hidden');
+    }
+  }
+
+  // 显示通知消息
+  function showNotification(message) {
+    var type = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 'success';
+    // 创建通知元素
+    var notification = document.createElement('div');
+    notification.className = "fixed top-20 right-4 px-6 py-3 rounded-lg shadow-lg transform transition-all duration-300 translate-x-full z-50 ".concat(type === 'success' ? 'bg-green-500 text-white' : 'bg-red-500 text-white');
+
+    // 设置图标和消息
+    notification.innerHTML = "\n                    <i class=\"fas ".concat(type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle', " mr-2\"></i>\n                    <span>").concat(message, "</span>\n                ");
+
+    // 添加到页面
+    document.body.appendChild(notification);
+
+    // 显示通知
+    setTimeout(function () {
+      notification.classList.remove('translate-x-full');
+      notification.classList.add('translate-x-0');
+    }, 10);
+
+    // 3秒后自动关闭
+    setTimeout(function () {
+      notification.classList.remove('translate-x-0');
+      notification.classList.add('translate-x-full');
+
+      // 移除元素
+      setTimeout(function () {
+        document.body.removeChild(notification);
+      }, 300);
+    }, 3000);
+  }
+});
+  </script>
+ </body>
+</html>
